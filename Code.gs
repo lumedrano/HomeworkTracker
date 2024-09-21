@@ -51,7 +51,7 @@ function addDailyReminders() {
 
 // This function sends a reminder email. Customize the recipient and email content as needed.
 function sendReminderEmail(assignmentName, assignmentClass, dueDate) {
-  var recipientEmail = "luigi.medrano@utexas.edu"; // Replace this with your email.
+  var recipientEmail = "youremail@gmail.com"; // Replace this with your email.
   var subject = "Assignment Reminder: " + assignmentName + " for " + assignmentClass;
   var message = "Hello, \n\nThis is a reminder that your assignment \"" + assignmentName + "\" for the class \"" + assignmentClass + "\" is due on " + formatDate(dueDate) + ".\n\nPlease ensure that you are making progress on it.\n\nBest regards,\nYour Assignment Logger";
 
