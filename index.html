@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fall 2023 Assignment Logger</title> <!-- title for our webpage-->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <!--this is just for styling our webpage, hence <style> tag-->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+    
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('https://raw.githubusercontent.com/lumedrano/Life-of-Luigi-website/main/assets/images/campus.jpg');
+      background-size: cover;
+      font-family: 'Montserrat', sans-serif;
+      color: #000;
+    }
+    
+   .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* flex-direction: column; */
+}
+
+.form {
+  padding: 30px;
+  border: 2px solid #fff;
+  background-color: rgba(255, 255, 255, 0.9);
+  max-width: 500px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.logo {
+  max-width: 200px;
+  margin-bottom: 20px;
+}
+
+.form h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.form input {
+  margin-bottom: 20px;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+}
+
+.submit-btn {
+  background-color: #f58220;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.submit-btn:hover {
+  background-color: #d16400;
+  transform: scale(1.05);
+}
+
+.message {
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+ .form select {
+      margin-bottom: 20px;
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .iframe_container {
+      padding: 20px;
+      /* display: flex; */
+    }
+  </style>
+<!-- from this <head> tag to the last div before script, this is all information we want to get from the user on the webpage-->
+</head>
+<body>
+  <div class="container"><!--this is the entire grey border we have that contains all text we want to display-->
+    <div class="overlay">
+      <div class="form"> <!--this is divider that allows us to design and display our form to take in the user's information-->
+        <form id="myForm">
+          <h2>Fall 2024 Assignment Logger - Luigi Medrano</h2> <!--this is a title tag that lets you add a header to the webpage-->
+          Assignment Name: <input type="text" name="assignmentName"><br> <!--this takes in input which is the assignment name from the user-->
+          Due Date: <input type="date" name="dueDate"><br> <!--takes due date from user/ type is date so we can get calendar instead of typing in-->
+          Subject: <select name="classDropdown"> <!--creates a drop down menu so we can assign our assignment to a certain class-->
+            <option value="ECE364D">ECE364D</option>
+            <option value="ECE360T">ECE360T</option>
+            <option value="ECE461L">ECE461L</option>
+            <option value="ECE125S">ECE125S</option>
+            <option value="ADV332">ADV332</option>
+            <option value="SOC344">SOC344</option>
+            <option value="SHPE">SHPE</option>
+          </select><br>
+          Status: <select name="status"> <!--this allows the user to set the status of the assignment, like have you started? in progress? or finished-->
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Checking">Checking</option>
+            <option value="Finished">Finished</option>
+          </select><br>
+          <button class="submit-btn" onclick="submitForm()">Submit</button> <!--This creates a button so we can add info to spreadsheet. once we press, it starts all function in backend-->
+        </form>
+        <div id="message"></div> <!-- This div allows us to see the success message displayed to our screen when we submit-->
+      </div>
+      <div class="iframe_container">
+      <iframe src="https://docs.google.com/spreadsheets/d/1ktv-fivcOQP3bPS6iFQlLTub9B9Vb6fHImoxPZnlOxk/edit#gid=0" width="500px" height="500px" frameborder="0"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script> /*this entire section is java script code so we can run code to ass assignments to our sheet and display success messages*/
+
+    /*this is like a listener, it waits for someone to hit the submit button and when that happens it runs our functions within the Code.gs file to add to sheet*/
+    document.getElementById('myForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var formData = new FormData(event.target);
+
+    /*this google.script.run runs our code in Code.gs and uses success/failure handlers so if something goes wrong then it will warn you or will tell you is was successful*/
+      google.script.run.withSuccessHandler(displaySuccessMessage)
+                         .withFailureHandler(displayErrorMessage)
+                         .addFormData(Object.fromEntries(formData.entries())); 
+      event.target.reset();
+    });
+
+    /*basically, if the google.script.run is successful at adding to the sheet then it will return "success" to the webpage in green font color*/
+    function displaySuccessMessage(message) {
+      var messageDiv = document.getElementById('message');
+      messageDiv.textContent = message;
+      messageDiv.style.color = 'green';
+    }
+    /*like the successmessage above, if something goes bad or is unsuccessful then it will return the error in red font color to the webpage*/
+    function displayErrorMessage(error) {
+      var messageDiv = document.getElementById('message');
+      messageDiv.textContent = error;
+      messageDiv.style.color = 'red';
+    }
+  </script>
+</body>
+</html>
